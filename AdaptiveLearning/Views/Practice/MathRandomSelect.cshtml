@@ -1,0 +1,55 @@
+@model AdaptiveLearning.Models.MathQuizViewModels.MathQuizRandomViewModel
+
+@{
+    ViewData["Title"] = "MathRandom";
+}
+
+<h2>MathRandom</h2>
+<form asp-controller="Practice" 
+      asp-action="MathRandomDisplay"
+      method="post">
+
+    <div class="container">
+
+            <div class="form-group">
+                <p>
+                    <label asp-for="Number1">Number One Range:</label>
+                    <input class="form-control" asp-for="Number1" type="text" id="number1" readonly style="border:0; color:#f6931f; font-weight:bold;">
+                </p>
+                <div id="slider-range-1"></div>            
+            </div>
+            <div class="form-group">
+                <p>
+                    <label asp-for="Number2">Number Two Range:</label>
+                    <input class="form-control" asp-for="Number2" type="text" id="number2" readonly style="border:0; color:#f6931f; font-weight:bold;">
+                </p>
+                <div id="slider-range-2"></div>
+            </div>
+            <div class="form-group">
+                  <fieldset>
+                    <label>Operations:</label>
+                    <label asp-for="Operations" style="color:#f6931f">Addition</label>
+                    <input class="form-control"  type="checkbox" name="Operations" id="checkbox-1" value="+">
+                      &nbsp;
+                    <label asp-for="Operations" style="color:#f6931f">Subtraction</label>
+                    <input class="form-control"  type="checkbox" name="Operations" id="checkbox-2" value="-"/>
+                      &nbsp;
+                    <label asp-for="Operations" style="color:#f6931f">Multiplication</label>
+                    <input class="form-control"  type="checkbox" name="Operations" id="checkbox-3" value="*"/>
+                      &nbsp;
+                    <label asp-for="Operations" style="color:#f6931f">Division</label>
+                    <input class="form-control"  type="checkbox" name="Operations" id="checkbox-4" value="/"/>
+                </fieldset> 
+                
+               
+            </div>
+            <div class="form-group">
+                <label asp-for="NumQuestions">Number of Problems</label>
+                <input class="form-control" asp-for="NumQuestions" type="text" name="NumQuestions" id="problemCount" />
+            </div>
+            
+       
+     
+    </div>
+    <input type="submit"  value="Create Practice Test" />
+</form>

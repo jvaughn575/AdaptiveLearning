@@ -1,0 +1,16 @@
+@model MathQuizModel
+
+@{
+    ViewData["Title"] = "MathRandomDisplay";
+}
+
+<h2>MathRandomDisplay</h2>
+
+@for (int index=0; index < Model.NumQuestions; index++)
+{
+    var question = Model.GetNextQuestion();
+    <h3>@question[0] @question[1] @question[2]</h3>
+    
+}
+
+
