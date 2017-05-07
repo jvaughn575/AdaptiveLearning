@@ -4,13 +4,96 @@
     ViewData["Title"] = "MathRandomDisplay";
 }
 
-<h2>MathRandomDisplay</h2>
 
-@for (int index=0; index < Model.NumQuestions; index++)
-{
-    var question = Model.GetNextQuestion();
-    <h3>@question[0] @question[1] @question[2]</h3>
+<div class="row">
     
-}
+    <div class="col-md-12">
+        <h2 id="math-quiz-line-1"></h2>        
+    </div>    
+    <div class="col-md-12">
+        <h2 id="math-quiz-line-2"></h2>
+    </div>
+    <div class="col-md-12">
+        <input type="text" name ="answer" id="math-quiz-line-3" />
+        
+    </div>
+
+</div>
+
+@section scripts{
 
 
+<script type="text/javascript">
+    $(function () {
+        var mathQuizParams =
+            {
+                number1LowRange: @Model.Number1LowRange,
+                number1HighRange: @Model.Number1HighRange,
+                number2LowRange: @Model.Number2LowRange,
+                number2HighRange: @Model.Number2HighRange,
+                operations: [],
+                numQuestions: @Model.NumQuestions,
+            };
+        @foreach (var op in Model.Operations)
+        {
+            @:mathQuizParams.operations.push("@op.ToString()");
+        }
+
+        var getRandom = function (min, max)
+        {
+            min = Math.ceil(min);
+            max = Math.floor(max+1);
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        };
+
+        var generateQuestion = function () {
+            var num1 = getRandom(mathQuizParams.number1LowRange, mathQuizParams.number1HighRange);
+            var num2 = getRandom(mathQuizParams.number2LowRange, mathQuizParams.number2HighRange);
+            var operator = mathQuizParams.operations[getRandom(0, mathQuizParams.operations.length - 1)];
+
+            return {num1: num1, num2: num2, operator: operator}
+         };
+
+        var loadQuestion = function () {
+            var question = generateQuestion();
+            $("#math-quiz-line-1").html(question.num1);
+            $("#math-quiz-line-2").html(question.operator + question.num2);
+            return question;
+        };
+
+        var operatorFuncArr = {
+            '+': function(a, b) {
+                return a + b;
+            },
+            '*': function(a, b) {
+                return a * b;
+            },
+            '-': function (a, b) {
+                return a - b;
+            },
+            '/': function (a, b) {
+                return a / b;
+             }
+        };
+
+        var question = loadQuestion();
+
+        $("#math-quiz-line-3").keyup(function (event) {
+            
+            
+            
+            console.log(question);
+            var correct_answer = operatorFuncArr[question.operator](question.num1, question.num2);
+            console.log("Answer is:", correct_answer);
+            console.log(event.target.value);
+            if (correct_answer == event.target.value) {
+                console.log("You got it correct!");
+                question = loadQuestion();
+            }
+
+        }.bind());
+
+    });
+</script>
+
+ }       

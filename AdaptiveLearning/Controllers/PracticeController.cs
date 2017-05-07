@@ -24,6 +24,8 @@ namespace AdaptiveLearning.Controllers
             return View();
         }
 
+
+
         [HttpPost]
         public IActionResult MathRandomDisplay(MathQuizRandomViewModel mathQuizRandomViewModel)
         {
