@@ -57,7 +57,19 @@
         <script src="~/lib/jquery/dist/jquery.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-        <script src="~/js/site.js" asp-append-version="true"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>        
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({
+            CommonHTML: {
+            scale: 400
+            }
+            });
+        </script>
+        <script type="text/javascript" 
+                src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+        </script>
+
+
 
     </environment>
     <environment names="Staging,Production">

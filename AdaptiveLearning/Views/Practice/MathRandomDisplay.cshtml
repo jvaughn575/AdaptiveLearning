@@ -1,3 +1,4 @@
+ 
 @model MathQuizModel
 
 @{
@@ -6,18 +7,12 @@
 
 
 <div class="row">
-    
-    <div class="col-md-12">
-        <h2 id="math-quiz-line-1"></h2>        
-    </div>    
-    <div class="col-md-12">
-        <h2 id="math-quiz-line-2"></h2>
-    </div>
-    <div class="col-md-12">
-        <input type="text" name ="answer" id="math-quiz-line-3" />
         
-    </div>
-
+    <div class="col-md-12 text-center divination" id="math-quiz">
+        $${}$$      
+        <input type="text" name="answer" id="math-quiz-line-3" />
+    </div>    
+    
 </div>
 
 @section scripts{
@@ -42,7 +37,7 @@
         var getRandom = function (min, max)
         {
             min = Math.ceil(min);
-            max = Math.floor(max+1);
+            max = Math.floor(max);
             return Math.floor(Math.random() * (max - min + 1)) + min;
         };
 
@@ -51,21 +46,36 @@
             var num2 = getRandom(mathQuizParams.number2LowRange, mathQuizParams.number2HighRange);
             var operator = mathQuizParams.operations[getRandom(0, mathQuizParams.operations.length - 1)];
 
-            return {num1: num1, num2: num2, operator: operator}
+            //Debug
+            //console.log("Generate Question:",operator, mathQuizParams, mathQuizParams.operations.length - 1);
+
+            return { num1: num1, num2: num2, operator: operator };
          };
 
         var loadQuestion = function () {
-            var question = generateQuestion();
-            $("#math-quiz-line-1").html(question.num1);
-            $("#math-quiz-line-2").html(question.operator + question.num2);
+            var question = generateQuestion();    
+                        
+            
+            var mathExpression = "\\begin{array}{r}&" + question.num1 + "\\\\" + question.operator + "\\!\\!\\!\\!\\!\\!&" + question.num2 + "\\\\\\hline\\end{array}";
+            mathExpression = mathExpression.replace("&#x2B;", "+");
+                                                           
+
+            MathJax.Hub.Queue(function () {
+                var math = MathJax.Hub.getAllJax("math-quiz")[0];
+                console.log("Mathjax", math);
+                MathJax.Hub.Queue(["Text", math, mathExpression]); }
+            );
+            var math = document.getElementById("#math-quiz");
+            
             return question;
         };
 
+        // &#x2B; is html encoded '+' symbol
         var operatorFuncArr = {
-            '+': function(a, b) {
+            '&#x2B;': function(a, b) {
                 return a + b;
             },
-            '*': function(a, b) {
+            'x': function(a, b) {
                 return a * b;
             },
             '-': function (a, b) {
@@ -78,9 +88,7 @@
 
         var question = loadQuestion();
 
-        $("#math-quiz-line-3").keyup(function (event) {
-            
-            
+        $("#math-quiz-line-3").keyup(function (event) {            
             
             console.log(question);
             var correct_answer = operatorFuncArr[question.operator](question.num1, question.num2);
@@ -91,7 +99,7 @@
                 question = loadQuestion();
             }
 
-        }.bind());
+        });
 
     });
 </script>
