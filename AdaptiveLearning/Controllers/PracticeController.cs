@@ -49,5 +49,31 @@ namespace AdaptiveLearning.Controllers
             return View(mathQuizModel);
 
         }
+
+        
+        private static QuizResultBundle _datas;
+        
+        [HttpPost]
+        public JsonResult PostJson(QuizResultBundle data)              
+        {
+            
+            if (data != null)
+            {
+                // _datas = data;
+                _datas = data;
+            }
+
+            return Json(new
+            {
+                state = 0,
+                msg = string.Empty
+            });
+            
+        }
+        [HttpGet]
+        public IActionResult PostJson() {
+            return View( _datas);
+            
+        }
     }
 }

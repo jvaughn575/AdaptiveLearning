@@ -4,7 +4,7 @@ $(function () {
         range: true,
         min: 0,
         max: 500,
-        values: [75, 300],
+        values: [0, 10],
         slide: function (event, ui) {
             $("#number1").val(ui.values[0] + " " + ui.values[1]);
         }
@@ -16,7 +16,7 @@ $(function () {
         range: true,
         min: 0,
         max: 500,
-        values: [75, 300],
+        values: [0, 10],
         slide: function (event, ui) {
             $("#number2").val(ui.values[0] + " " + ui.values[1]);
         }

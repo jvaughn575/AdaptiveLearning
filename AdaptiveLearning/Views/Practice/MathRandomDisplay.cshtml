@@ -20,6 +20,8 @@
 
 <script type="text/javascript">
     $(function () {
+
+
         var mathQuizParams =
             {
                 number1LowRange: @Model.Number1LowRange,
@@ -33,6 +35,7 @@
         {
             @:mathQuizParams.operations.push("@op.ToString()");
         }
+        
 
         var getRandom = function (min, max)
         {
@@ -41,13 +44,22 @@
             return Math.floor(Math.random() * (max - min + 1)) + min;
         };
 
+        var mathQuizResultJsonData = {
+            quiz : { questions: "", created: new Date() },
+            result: {points: [], secsperquestion: []}     
+        }; 
+
         var generateQuestion = function () {
             var num1 = getRandom(mathQuizParams.number1LowRange, mathQuizParams.number1HighRange);
             var num2 = getRandom(mathQuizParams.number2LowRange, mathQuizParams.number2HighRange);
             var operator = mathQuizParams.operations[getRandom(0, mathQuizParams.operations.length - 1)];
 
-            //Debug
-            //console.log("Generate Question:",operator, mathQuizParams, mathQuizParams.operations.length - 1);
+            // Make sure the biggest number is on top
+            if (num2 > num1) {
+                var temp = num2;
+                num2 = num1;
+                num1 = temp;
+            }
 
             return { num1: num1, num2: num2, operator: operator };
          };
@@ -62,7 +74,7 @@
 
             MathJax.Hub.Queue(function () {
                 var math = MathJax.Hub.getAllJax("math-quiz")[0];
-                console.log("Mathjax", math);
+                //console.log("Mathjax", math);
                 MathJax.Hub.Queue(["Text", math, mathExpression]); }
             );
             var math = document.getElementById("#math-quiz");
@@ -70,7 +82,7 @@
             return question;
         };
 
-        // &#x2B; is html encoded '+' symbol
+        // &#x2B; is html encoded representation of the '+' symbol
         var operatorFuncArr = {
             '&#x2B;': function(a, b) {
                 return a + b;
@@ -87,18 +99,70 @@
         };
 
         var question = loadQuestion();
+        var startTime = Date.now();
+        var endTime;
 
-        $("#math-quiz-line-3").keyup(function (event) {            
-            
-            console.log(question);
-            var correct_answer = operatorFuncArr[question.operator](question.num1, question.num2);
-            console.log("Answer is:", correct_answer);
-            console.log(event.target.value);
-            if (correct_answer == event.target.value) {
-                console.log("You got it correct!");
-                question = loadQuestion();
+        const Emotion = {            
+            Contempt: 'Contempt',
+            Disgust: 'Disgust',
+            Fear: 'Fear',
+            Happiness: 'Happiness',
+            Neutral: 'Neutral',
+            Sadness: 'Sadness',
+            Surprise: 'Surprise'
+        }
+                
+        
+
+        $("#math-quiz-line-3").on('keyup', function (e) {
+            if (e.keyCode == 13) { // enter key
+                endTime = Date.now();
+                
+                var correct_answer = operatorFuncArr[question.operator](question.num1, question.num2);
+                //console.log("Answer is:", correct_answer);
+                
+                if (correct_answer == event.target.value) {
+                    // 1 in the arr represents a correct answer
+                    mathQuizResultJsonData.result.points.push(1);
+                    mathQuizResultJsonData.quiz.questions += question.num1 + question.operator + question.num2 + "|";
+                    mathQuizResultJsonData.result.secsperquestion.push((endTime - startTime) / 1000);
+
+                    if (mathQuizResultJsonData.result.points.length == mathQuizParams.numQuestions) {
+
+                        $.ajax({
+                            url: "/Practice/PostJson",
+                            type: "POST",                            
+                            data: mathQuizResultJsonData,
+                            success: function (data) {
+                                if (data.state == 0) {
+                                    document.location="/Practice/PostJson";
+                                    
+                                }                                
+                            }
+                        });
+
+                    }
+                    else {
+                        // Reset text box and load next question
+                        $('#math-quiz-line-3').val('');
+                        question = loadQuestion();
+                        startTime = Date.now();
+                    }
+                }
+                else {
+                    // 0 in the arr represents a incorrect answer
+                    mathQuizResultJsonData.result.points.push(0);
+                    mathQuizResultJsonData.quiz.questions += question.num1 + question.operator + question.num2 + "|";
+                    mathQuizResultJsonData.result.secsperquestion.push((endTime - startTime)/1000);
+
+                    // Reset text box and load next question
+                    $('#math-quiz-line-3').val('');
+                    question = loadQuestion();
+                    startTime = Date.now();
+                }
+                
             }
-
+            console.log(mathQuizResultJsonData);
         });
 
     });

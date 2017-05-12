@@ -47,6 +47,9 @@ namespace AdaptiveLearning
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+            //services.AddDbContext<MathQuizDbContext>(options =>
+            //    options.UseSqlServer(Configuration.GetConnectionString("Quiz")));
+
             services.AddMvc();
 
             // Add application services.
