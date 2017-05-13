@@ -15,9 +15,8 @@
     
 </div>
 
+
 @section scripts{
-
-
 <script type="text/javascript">
     $(function () {
 
@@ -45,8 +44,8 @@
         };
 
         var mathQuizResultJsonData = {
-            quiz : { questions: "", created: new Date() },
-            result: {points: [], secsperquestion: []}     
+            quiz: { questions: "", created: (new Date()).toISOString() },
+            result: {points: "", secsperquestion: ""}     
         }; 
 
         var generateQuestion = function () {
@@ -123,11 +122,16 @@
                 
                 if (correct_answer == event.target.value) {
                     // 1 in the arr represents a correct answer
-                    mathQuizResultJsonData.result.points.push(1);
-                    mathQuizResultJsonData.quiz.questions += question.num1 + question.operator + question.num2 + "|";
-                    mathQuizResultJsonData.result.secsperquestion.push((endTime - startTime) / 1000);
+                    mathQuizResultJsonData.result.points += (1).toString() + " ";
+                }
+                else{
+                        mathQuizResultJsonData.result.points += (0).toString() + " ";
+                    }
 
-                    if (mathQuizResultJsonData.result.points.length == mathQuizParams.numQuestions) {
+                mathQuizResultJsonData.quiz.questions += question.num1 + question.operator + question.num2 + " ";
+                mathQuizResultJsonData.result.secsperquestion += ((endTime - startTime) / 1000).toString() + " ";
+
+                    if ((mathQuizResultJsonData.result.points.split(" ").length - 1) == mathQuizParams.numQuestions) {
 
                         $.ajax({
                             url: "/Practice/PostJson",
@@ -148,18 +152,8 @@
                         question = loadQuestion();
                         startTime = Date.now();
                     }
-                }
-                else {
-                    // 0 in the arr represents a incorrect answer
-                    mathQuizResultJsonData.result.points.push(0);
-                    mathQuizResultJsonData.quiz.questions += question.num1 + question.operator + question.num2 + "|";
-                    mathQuizResultJsonData.result.secsperquestion.push((endTime - startTime)/1000);
-
-                    // Reset text box and load next question
-                    $('#math-quiz-line-3').val('');
-                    question = loadQuestion();
-                    startTime = Date.now();
-                }
+                
+               
                 
             }
             console.log(mathQuizResultJsonData);

@@ -4,14 +4,27 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using AdaptiveLearning.Models.MathQuizViewModels;
 using AdaptiveLearning.Models;
+using AdaptiveLearning.Helpers;
+using AdaptiveLearning.Data;
+
+
 
 namespace AdaptiveLearning.Controllers
 {
     [Authorize]
     public class PracticeController : Controller
     {
+        private MathQuizDbContext context;
+
+        public PracticeController(MathQuizDbContext dbContext)
+        {
+            context = dbContext;
+        }
+
+
         public IActionResult Index()
         {
             return View();
@@ -32,7 +45,7 @@ namespace AdaptiveLearning.Controllers
             MathQuizModel mathQuizModel = new MathQuizModel();
 
             var number1 = mathQuizRandomViewModel.Number1.Split(' ');
-            //return Content(number1[0] + number1[1]);
+            
             mathQuizModel.Number1LowRange = int.Parse(number1[0]);
             mathQuizModel.Number1HighRange = int.Parse(number1[1]);
 
@@ -57,10 +70,28 @@ namespace AdaptiveLearning.Controllers
         public JsonResult PostJson(QuizResultBundle data)              
         {
             
-            if (data != null)
+            if (data != null && ModelState.IsValid)
             {
-                // _datas = data;
+                
                 _datas = data;
+                SavedMathQuiz quiz = _datas.quiz;
+                ResultMathQuiz result = _datas.result;
+
+                // Add data to the models on the c# side
+                quiz.UserID = User.getUserId();
+                               
+                // Save quiz to db
+                context.SavedMathQuizzes.Add(quiz);
+                context.SaveChanges();
+
+                int quizId = quiz.ID;
+                
+
+                // Add quiz id to result and save to db
+                result.SavedMathQuizID = quizId;
+                context.ResultMathQuizzes.Add(result);
+                context.SaveChanges();
+                                
             }
 
             return Json(new

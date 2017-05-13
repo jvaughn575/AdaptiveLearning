@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,15 +20,17 @@ namespace AdaptiveLearning.Models
     }
 
     public class ResultMathQuiz
-    {       
-        public int points { get; set; }
-        public ICollection<Double> secsperquestion { get; set; }
-        public ICollection<EmotionalState?> EmotionalStatePerQuestion { get; set; }
+    {
+        public int ID { get; set; }
+        public string points { get; set; }
+        public string secsperquestion { get; set; }
+        public string EmotionalStatePerQuestion { get; set; }
 
+        //[ForeignKey("SavedMathQuiz")]
+        
+        public int SavedMathQuizID { get; set; }
 
-        public int QuizID { get; set; }
-
-
+       // public virtual SavedMathQuiz SavedMathQuiz { get; set; }
         
     }
 }
