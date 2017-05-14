@@ -8,6 +8,7 @@ using AdaptiveLearning.Models;
 using AdaptiveLearning.Data;
 using AdaptiveLearning.Helpers;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -24,10 +25,119 @@ namespace AdaptiveLearning.Controllers
             context = dbContext;
         }
 
-        // GET: /<controller>/
-        public IActionResult Index()
+        // GET: SavedMathQuizs
+        public async Task<IActionResult> Index()
+        {
+            return View(await context.SavedMathQuizzes.ToListAsync());
+        }
+
+        
+
+        // GET: SavedMathQuizs/Create
+        public IActionResult Create()
         {
             return View();
+        }
+
+        // POST: SavedMathQuizs/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("ID,questions,created,UserID")] SavedMathQuiz savedMathQuiz)
+        {
+            if (ModelState.IsValid)
+            {
+                context.Add(savedMathQuiz);
+                await context.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+            return View(savedMathQuiz);
+        }
+
+        // GET: SavedMathQuizs/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var savedMathQuiz = await context.SavedMathQuizzes.SingleOrDefaultAsync(m => m.ID == id);
+            if (savedMathQuiz == null)
+            {
+                return NotFound();
+            }
+            return View(savedMathQuiz);
+        }
+
+        // POST: SavedMathQuizs/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("ID,questions,created,UserID")] SavedMathQuiz savedMathQuiz)
+        {
+            if (id != savedMathQuiz.ID)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    context.Update(savedMathQuiz);
+                    await context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!SavedMathQuizExists(savedMathQuiz.ID))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction("Index");
+            }
+            return View(savedMathQuiz);
+        }
+
+        // GET: SavedMathQuizs/Delete/5
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var savedMathQuiz = await context.SavedMathQuizzes
+                .SingleOrDefaultAsync(m => m.ID == id);
+            if (savedMathQuiz == null)
+            {
+                return NotFound();
+            }
+
+            return View(savedMathQuiz);
+        }
+
+        // POST: SavedMathQuizs/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var savedMathQuiz = await context.SavedMathQuizzes.SingleOrDefaultAsync(m => m.ID == id);
+            context.SavedMathQuizzes.Remove(savedMathQuiz);
+            await context.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+
+        private bool SavedMathQuizExists(int id)
+        {
+            return context.SavedMathQuizzes.Any(e => e.ID == id);
         }
 
         [Route("MathQuiz/Random")]
@@ -106,6 +216,62 @@ namespace AdaptiveLearning.Controllers
         {
             return View(_datas);
 
+        }
+
+        
+        // GET: SavedMathQuizs/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            //using (context)
+            //{
+            //    var savedMathQuiz = context.SavedMathQuizzes     
+            //        .Include(q => q.Results)
+            //        .ToList();
+            //
+            //    if (savedMathQuiz == null)
+            //    {
+            //        return NotFound();
+            //    }
+
+            //    return View(savedMathQuiz);
+            //}
+
+            using (context)
+            {
+                var quiz = context.SavedMathQuizzes
+                    .Single(q => q.ID == id);
+
+                var results = context.Entry(quiz)
+                    .Collection(q => q.Results)
+                    .Query()
+                    .Where(r => r.SavedMathQuizID == id)
+                    .ToList();
+
+                quiz.Results = results;
+
+                if (quiz == null)
+                {
+                    return NotFound();
+                }
+
+               return View(quiz);
+            }
+
+
+
+            // var savedMathQuiz = await context.SavedMathQuizzes
+            //     .SingleOrDefaultAsync(m => m.ID == id);
+            //if (savedMathQuiz == null)
+            //{
+            //    return NotFound();
+            //}
+
+            //return View(savedMathQuiz);
         }
     }
 }

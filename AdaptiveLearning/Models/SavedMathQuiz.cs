@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,7 +15,11 @@ namespace AdaptiveLearning.Models
         public DateTime created { get; set; }
         public string UserID { get; set; }
 
+             
+        public virtual ICollection<ResultMathQuiz> Results { get; set; }
 
-        public ICollection<ResultMathQuiz> Results { get; set; }
+
+
+        
     }
 }

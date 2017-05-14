@@ -21,16 +21,16 @@ namespace AdaptiveLearning.Models
 
     public class ResultMathQuiz
     {
+        [Key]
         public int ID { get; set; }
         public string points { get; set; }
         public string secsperquestion { get; set; }
         public string EmotionalStatePerQuestion { get; set; }
 
-        //[ForeignKey("SavedMathQuiz")]
-        
+        [ForeignKey("SavedMathQuiz")]        
         public int SavedMathQuizID { get; set; }
 
-       // public virtual SavedMathQuiz SavedMathQuiz { get; set; }
+       //public virtual SavedMathQuiz SavedMathQuiz { get; set; }
         
     }
 }
