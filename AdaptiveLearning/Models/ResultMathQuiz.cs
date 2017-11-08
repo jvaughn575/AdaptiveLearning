@@ -26,6 +26,7 @@ namespace AdaptiveLearning.Models
         public string points { get; set; }
         public string secsperquestion { get; set; }
         public string EmotionalStatePerQuestion { get; set; }
+        public DateTime created { get; set; }
 
         [ForeignKey("SavedMathQuiz")]        
         public int SavedMathQuizID { get; set; }

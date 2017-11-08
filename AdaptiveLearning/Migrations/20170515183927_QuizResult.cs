@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace AdaptiveLearning.Migrations
 {
-    public partial class QuizMathResult : Migration
+    public partial class QuizResult : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -32,6 +32,7 @@ namespace AdaptiveLearning.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     EmotionalStatePerQuestion = table.Column<string>(nullable: true),
                     SavedMathQuizID = table.Column<int>(nullable: false),
+                    created = table.Column<DateTime>(nullable: false),
                     points = table.Column<string>(nullable: true),
                     secsperquestion = table.Column<string>(nullable: true)
                 },

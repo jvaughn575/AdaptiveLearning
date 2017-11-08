@@ -25,6 +25,8 @@ namespace AdaptiveLearning.Migrations
 
                     b.Property<int>("SavedMathQuizID");
 
+                    b.Property<DateTime>("created");
+
                     b.Property<string>("points");
 
                     b.Property<string>("secsperquestion");

@@ -8,8 +8,8 @@ using AdaptiveLearning.Data;
 namespace AdaptiveLearning.Migrations
 {
     [DbContext(typeof(MathQuizDbContext))]
-    [Migration("20170513040618_QuizMathResult")]
-    partial class QuizMathResult
+    [Migration("20170515183927_QuizResult")]
+    partial class QuizResult
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -25,6 +25,8 @@ namespace AdaptiveLearning.Migrations
                     b.Property<string>("EmotionalStatePerQuestion");
 
                     b.Property<int>("SavedMathQuizID");
+
+                    b.Property<DateTime>("created");
 
                     b.Property<string>("points");
 

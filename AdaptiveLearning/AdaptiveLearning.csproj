@@ -16,7 +16,8 @@
     <Content Include="wwwroot\css\StyleSheet.css" />
     <Content Include="wwwroot\images\heart_mind.jpg" />
     <Content Include="wwwroot\images\heart_mind.svg" />
-    <Content Include="wwwroot\js\mathQuiz.js" />
+    <Content Include="wwwroot\js\ChartHelper.js" />
+    <Content Include="wwwroot\js\MathQuiz.js" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.0.0" />

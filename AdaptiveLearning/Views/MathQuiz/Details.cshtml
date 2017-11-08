@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Details";
-    
+
 }
 
 <h2>Details</h2>
@@ -33,15 +33,20 @@
 </div>
 
 <div>
-    <ul>
-        <li>
-            @foreach (var result in Model.Results) {
-               <p>@result.points</p>
-               <p>@result.secsperquestion</p>
+    <canvas id="myChart"></canvas> 
+ <!--@*   <ul>
 
+            @foreach (var result in Model.Results) {
+             <li>
+               <p>@result.points @result.secsperquestion @result.created</p>
+
+             </li>
              }
-        </li>
-    </ul>
+
+    </ul> *@-->
+
+
+
 </div>
 
 <div>
@@ -49,3 +54,65 @@
     
     <a asp-action="Index">Back to List</a>
 </div>
+
+
+@section scripts{
+    <script type="text/javascript">
+
+        var datasets = [];
+        var opacity = 1.0;
+        var secsPerQuestion = [];
+        var savedFirstResult = [];
+        var index = 0;
+
+        var count = 0;
+
+        @{var isFirstResult = true;}
+
+
+        @foreach (var op in Model.Results) {
+
+            foreach (var secs in op.secsperquestion.Split(' '))
+            {
+
+                        @:secsPerQuestion.push("@secs.ToString()");
+
+
+            }
+            @*
+            if (isFirstResult)
+            {
+                @:savedFirstResult = secsPerQuestion.slice();
+                isFirstResult = false;
+            }
+            else
+            {
+               
+                @:secsPerQuestion.forEach(function (currentValue, index) { secsPerQuestion[index] = (parseFloat(secsPerQuestion[index]) - parseFloat(savedFirstResult[index]) > 0 ? parseFloat(secsPerQuestion[index]) - parseFloat(savedFirstResult[index]) : parseFloat(savedFirstResult[index]) + (parseFloat(secsPerQuestion[index]) - parseFloat(savedFirstResult[index])) ).toString(); }); 
+        }*@
+
+            <text>
+
+            datasets.push({
+                label: "@Convert.ToString(op.created)",
+                data: secsPerQuestion,
+                backgroundColor: "rgba(55, 160, 225," + opacity + ")",
+                hoverBackgroundColor: "rgba(155,160,225,0.7)",
+                hoverBorderWidth: 2,
+                HoverBorderColor: 'lightgrey'
+
+            });
+            secsPerQuestion = [];
+            opacity -= 0.2;
+            </text>
+
+
+        }
+        console.log("DATASETS", datasets);
+        Charts.StackedResultBarChart(datasets);
+        //Charts.StackedResultLineChart(datasets);
+
+
+    </script>
+
+}

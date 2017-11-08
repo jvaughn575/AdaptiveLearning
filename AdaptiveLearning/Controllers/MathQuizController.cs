@@ -55,8 +55,23 @@ namespace AdaptiveLearning.Controllers
             return View(savedMathQuiz);
         }
 
-        // GET: SavedMathQuizs/Edit/5
+        
         public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var savedMathQuiz = await context.SavedMathQuizzes.SingleOrDefaultAsync(m => m.ID == id);
+            if (savedMathQuiz == null)
+            {
+                return NotFound();
+            }
+            return View(savedMathQuiz);
+        }
+
+        public async Task<IActionResult> MathRetakeDisplay(int? id)
         {
             if (id == null)
             {
@@ -211,6 +226,29 @@ namespace AdaptiveLearning.Controllers
             });
 
         }
+
+
+        [HttpPost]
+        public JsonResult PostJsonResult(ResultMathQuiz result)
+        {
+
+            if (result != null && ModelState.IsValid)
+            {                                   
+                
+                // Add quiz id to result and save to db                
+                context.ResultMathQuizzes.Add(result);
+                context.SaveChanges();
+
+            }
+
+            return Json(new
+            {
+                state = 1,
+                msg = string.Empty
+            });
+
+        }
+
         [HttpGet]
         public IActionResult PostJson()
         {
@@ -220,27 +258,14 @@ namespace AdaptiveLearning.Controllers
 
         
         // GET: SavedMathQuizs/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Details(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            //using (context)
-            //{
-            //    var savedMathQuiz = context.SavedMathQuizzes     
-            //        .Include(q => q.Results)
-            //        .ToList();
-            //
-            //    if (savedMathQuiz == null)
-            //    {
-            //        return NotFound();
-            //    }
-
-            //    return View(savedMathQuiz);
-            //}
-
+            
             using (context)
             {
                 var quiz = context.SavedMathQuizzes
@@ -261,17 +286,7 @@ namespace AdaptiveLearning.Controllers
 
                return View(quiz);
             }
-
-
-
-            // var savedMathQuiz = await context.SavedMathQuizzes
-            //     .SingleOrDefaultAsync(m => m.ID == id);
-            //if (savedMathQuiz == null)
-            //{
-            //    return NotFound();
-            //}
-
-            //return View(savedMathQuiz);
+                        
         }
     }
 }
